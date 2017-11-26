@@ -143,7 +143,12 @@
     <feature name="openhab-binding-hdpowerview" description="HD PowerView Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.hdpowerview/${project.version}</bundle>
-    </feature> 
+    </feature>
+    
+     <feature name="openhab-binding-heos" description="Denon HEOS Binding" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle>
+    </feature>  
 
     <feature name="openhab-binding-ipp" description="IPP Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
