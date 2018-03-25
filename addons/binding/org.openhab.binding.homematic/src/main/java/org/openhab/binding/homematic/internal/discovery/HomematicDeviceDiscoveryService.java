@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2017 by the respective copyright holders.
+ * Copyright (c) 2010-2018 by the respective copyright holders.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -65,9 +65,8 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
     @Override
     public synchronized void stopScan() {
         logger.debug("Stopping Homematic discovery scan");
-        HomematicGateway gateway = bridgeHandler.getGateway();
-        if (gateway != null) {
-            gateway.cancelLoadAllDeviceMetadata();
+        if (bridgeHandler != null && bridgeHandler.getGateway() != null) {
+            bridgeHandler.getGateway().cancelLoadAllDeviceMetadata();
         }
         waitForScanFinishing();
         super.stopScan();
@@ -94,23 +93,19 @@ public class HomematicDeviceDiscoveryService extends AbstractDiscoveryService {
      * Starts a thread which loads all Homematic devices connected to the gateway.
      */
     public void loadDevices() {
-        if (scanFuture == null) {
-            scanFuture = scheduler.submit(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        final HomematicGateway gateway = bridgeHandler.getGateway();
-                        gateway.loadAllDeviceMetadata();
-                        bridgeHandler.getTypeGenerator().validateFirmwares();
-                        logger.debug("Finished Homematic device discovery scan on gateway '{}'", gateway.getId());
-                    } catch (Throwable ex) {
-                        logger.error("{}", ex.getMessage(), ex);
-                    } finally {
-                        scanFuture = null;
-                        bridgeHandler.setOfflineStatus();
-                        removeOlderResults(getTimestampOfLastScan());
-                    }
+        if (scanFuture == null && bridgeHandler.getGateway() != null) {
+            scanFuture = scheduler.submit(() -> {
+                try {
+                    final HomematicGateway gateway = bridgeHandler.getGateway();
+                    gateway.loadAllDeviceMetadata();
+                    bridgeHandler.getTypeGenerator().validateFirmwares();
+                    logger.debug("Finished Homematic device discovery scan on gateway '{}'", gateway.getId());
+                } catch (Throwable ex) {
+                    logger.error("{}", ex.getMessage(), ex);
+                } finally {
+                    scanFuture = null;
+                    bridgeHandler.setOfflineStatus();
+                    removeOlderResults(getTimestampOfLastScan());
                 }
             });
         } else {
