@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2010-2018 by the respective copyright holders.
+	Copyright (c) 2010-2018 by the respective copyright holders.
 
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
+	All rights reserved. This program and the accompanying materials
+	are made available under the terms of the Eclipse Public License v1.0
+	which accompanies this distribution, and is available at
+	http://www.eclipse.org/legal/epl-v10.html
 
 -->
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
@@ -172,12 +172,6 @@
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.netatmo/${project.version}</bundle>
     </feature>
 
-    <feature name="openhab-binding-homematic" description="Homematic Binding" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
-        <feature>openhab-transport-upnp</feature>
-        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.homematic/${project.version}</bundle>
-    </feature>
-
     <feature name="openhab-binding-hdanywhere" description="HDAnywhere Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.hdanywhere/${project.version}</bundle>
@@ -326,6 +320,12 @@
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.network/${project.version}</bundle>
     </feature>
 
+    <feature name="openhab-binding-nibeheatpump" description="Nibe Heat Pump Binding" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <feature>openhab-transport-serial</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.nibeheatpump/${project.version}</bundle>
+    </feature>
+
     <feature name="openhab-binding-nikohomecontrol" description="Niko Home Control Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.nikohomecontrol/${project.version}</bundle>
@@ -465,6 +465,11 @@
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.smaenergymeter/${project.version}</bundle>
     </feature>
 
+    <feature name="openhab-binding-solaredge" description="SolarEdge Binding" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.solaredge/${project.version}</bundle>
+    </feature>
+
     <feature name="openhab-binding-solarlog" description="SolarLog Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.solarlog/${project.version}</bundle>
@@ -548,6 +553,11 @@
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.yamahareceiver/${project.version}</bundle>
     </feature>
 
+    <feature name="openhab-binding-yeelight" description="Yeelight Binding" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.yeelight/${project.version}</bundle>
+    </feature>
+
     <feature name="openhab-binding-zoneminder" description="ZoneMinder Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.zoneminder/${project.version}</bundle>
@@ -569,6 +579,7 @@
 
     <feature name="openhab-misc-azureiothub" description="Azure IoT Hub Connector" version="${project.version}">
         <feature>openhab-runtime-base</feature>
+        <feature>openhab-transport-mqtt</feature>
         <bundle start-level="80">mvn:org.openhab.io/org.openhab.io.azureiothub/${project.version}</bundle>
     </feature>
 
@@ -605,6 +616,11 @@
     <feature name="openhab-voice-marytts" description="Mary Text-to-Speech" version="${project.version}">
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.voice/org.openhab.voice.marytts/${project.version}</bundle>
+    </feature>
+
+    <feature name="openhab-voice-picotts" description="Pico Text-to-Speech" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <bundle start-level="80">mvn:org.openhab.voice/org.openhab.voice.picotts/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-voice-voicerss" description="VoiceRSS Text-to-Speech" version="${project.version}">

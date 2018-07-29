@@ -22,6 +22,7 @@ import javax.measure.quantity.Time;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.core.i18n.UnitProvider;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.QuantityType;
 import org.eclipse.smarthome.core.library.types.StringType;
@@ -48,8 +49,11 @@ import org.slf4j.LoggerFactory;
 public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
     private final Logger logger = LoggerFactory.getLogger(NestThermostatHandler.class);
 
-    public NestThermostatHandler(Thing thing) {
-        super(thing);
+    private final UnitProvider unitProvider;
+
+    public NestThermostatHandler(Thing thing, UnitProvider unitProvider) {
+        super(thing, Thermostat.class);
+        this.unitProvider = unitProvider;
     }
 
     @Override
@@ -118,7 +122,6 @@ public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
      * value of a channel by sending the request to Nest.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (REFRESH.equals(command)) {
             Thermostat lastUpdate = getLastUpdate();
@@ -131,36 +134,26 @@ public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
                 addUpdateRequest("fan_timer_active", command == OnOffType.ON);
             }
         } else if (CHANNEL_FAN_TIMER_DURATION.equals(channelUID.getId())) {
-            if (command instanceof QuantityType) {
-                // Update fan timer duration to the command value
-                QuantityType<Time> minuteQuantity = ((QuantityType<Time>) command).toUnit(SmartHomeUnits.MINUTE);
-                if (minuteQuantity != null) {
-                    addUpdateRequest("fan_timer_duration", minuteQuantity.intValue());
-                }
+            // Update fan timer duration to the command value
+            QuantityType<Time> quantity = commandToQuantityType(command, SmartHomeUnits.MINUTE);
+            QuantityType<Time> minuteQuantity = quantity.toUnit(SmartHomeUnits.MINUTE);
+            if (minuteQuantity != null) {
+                addUpdateRequest("fan_timer_duration", minuteQuantity.intValue());
             }
         } else if (CHANNEL_MAX_SET_POINT.equals(channelUID.getId())) {
-            if (command instanceof QuantityType) {
-                // Update maximum set point to the command value
-                addTemperatureUpdateRequest("target_temperature_high_c", "target_temperature_high_f",
-                        (QuantityType<Temperature>) command);
-            }
+            // Update maximum set point to the command value
+            addTemperatureUpdateRequest("target_temperature_high_c", "target_temperature_high_f", command);
         } else if (CHANNEL_MIN_SET_POINT.equals(channelUID.getId())) {
-            if (command instanceof QuantityType) {
-                // Update minimum set point to the command value
-                addTemperatureUpdateRequest("target_temperature_low_c", "target_temperature_low_f",
-                        (QuantityType<Temperature>) command);
-            }
+            // Update minimum set point to the command value
+            addTemperatureUpdateRequest("target_temperature_low_c", "target_temperature_low_f", command);
         } else if (CHANNEL_MODE.equals(channelUID.getId())) {
             if (command instanceof StringType) {
                 // Update the HVAC mode to the command value
                 addUpdateRequest("hvac_mode", Mode.valueOf(((StringType) command).toString()));
             }
         } else if (CHANNEL_SET_POINT.equals(channelUID.getId())) {
-            if (command instanceof QuantityType) {
-                // Update set point to the command value
-                addTemperatureUpdateRequest("target_temperature_c", "target_temperature_f",
-                        (QuantityType<Temperature>) command);
-            }
+            // Update set point to the command value
+            addTemperatureUpdateRequest("target_temperature_c", "target_temperature_f", command);
         }
     }
 
@@ -168,9 +161,9 @@ public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
         addUpdateRequest(NEST_THERMOSTAT_UPDATE_PATH, field, value);
     }
 
-    private void addTemperatureUpdateRequest(String celsiusField, String fahrenheitField,
-            QuantityType<Temperature> quantity) {
+    private void addTemperatureUpdateRequest(String celsiusField, String fahrenheitField, Command command) {
         Unit<Temperature> unit = getTemperatureUnit();
+        QuantityType<Temperature> quantity = commandToQuantityType(command, unit);
         BigDecimal value = quantityToRoundedTemperature(quantity, unit);
         if (value != null) {
             addUpdateRequest(NEST_THERMOSTAT_UPDATE_PATH, unit == CELSIUS ? celsiusField : fahrenheitField, value);
@@ -179,8 +172,16 @@ public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
 
     private Unit<Temperature> getTemperatureUnit() {
         Thermostat lastUpdate = getLastUpdate();
-        return lastUpdate != null && lastUpdate.getTemperatureUnit() != null ? lastUpdate.getTemperatureUnit()
-                : CELSIUS;
+        if (lastUpdate != null && lastUpdate.getTemperatureUnit() != null) {
+            return lastUpdate.getTemperatureUnit();
+        }
+
+        Unit<Temperature> systemTemperatureUnit = unitProvider.getUnit(Temperature.class);
+        if (systemTemperatureUnit != null) {
+            return systemTemperatureUnit;
+        }
+
+        return CELSIUS;
     }
 
     private @Nullable BigDecimal quantityToRoundedTemperature(QuantityType<Temperature> quantity,
@@ -197,19 +198,18 @@ public class NestThermostatHandler extends NestBaseHandler<Thermostat> {
     }
 
     @Override
-    public void onNewNestThermostatData(Thermostat thermostat) {
-        if (isNotHandling(thermostat)) {
-            logger.debug("Thermostat {} is not handling update for {}", getDeviceId(), thermostat.getDeviceId());
-            return;
+    protected void update(Thermostat oldThermostat, Thermostat thermostat) {
+        logger.debug("Updating {}", getThing().getUID());
+
+        updateLinkedChannels(oldThermostat, thermostat);
+        updateProperty(PROPERTY_FIRMWARE_VERSION, thermostat.getSoftwareVersion());
+
+        ThingStatus newStatus = thermostat.isOnline() == null ? ThingStatus.UNKNOWN
+                : thermostat.isOnline() ? ThingStatus.ONLINE : ThingStatus.OFFLINE;
+        if (newStatus != thing.getStatus()) {
+            updateStatus(newStatus);
         }
 
-        logger.debug("Updating thermostat {}", thermostat.getDeviceId());
-
-        setLastUpdate(thermostat);
-        updateChannels(thermostat);
-        updateStatus(thermostat.isOnline() == null ? ThingStatus.UNKNOWN
-                : thermostat.isOnline() ? ThingStatus.ONLINE : ThingStatus.OFFLINE);
-        updateProperty(PROPERTY_FIRMWARE_VERSION, thermostat.getSoftwareVersion());
     }
 
 }
