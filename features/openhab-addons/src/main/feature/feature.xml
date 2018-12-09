@@ -201,6 +201,12 @@
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.helios/${project.version}</bundle>
     </feature>
+    
+    <feature name="openhab-binding-heos" description="Denon HEOS Binding" version="${project.version}">
+        <feature>openhab-runtime-base</feature>
+        <feature>openhab-transport-upnp</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle>
+    </feature>
 
     <feature name="openhab-binding-neato" description="Neato Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
@@ -221,11 +227,6 @@
         <feature>openhab-runtime-base</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.hdpowerview/${project.version}</bundle>
     </feature>
-    
-     <feature name="openhab-binding-heos" description="Denon HEOS Binding" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
-        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle>
-    </feature>  
 
     <feature name="openhab-binding-icloud" description="icloud Binding" version="${project.version}">
         <feature>openhab-runtime-base</feature>
