@@ -16,7 +16,7 @@
 
   <name>openHAB Bindings</name>
 
-    <modules>
+  <modules>
     <module>org.openhab.binding.airquality</module>
     <module>org.openhab.binding.airvisualnode</module>
     <module>org.openhab.binding.allplay</module>
@@ -63,7 +63,8 @@
     <module>org.openhab.binding.ipp</module>
     <module>org.openhab.binding.irtrans</module>
     <module>org.openhab.binding.jeelink</module>
-    <module>org.openhab.binding.keba</module>    
+    <module>org.openhab.binding.keba</module>
+    <module>org.openhab.binding.km200</module>
     <module>org.openhab.binding.knx</module>
     <module>org.openhab.binding.knx.test</module>
     <module>org.openhab.binding.kodi</module>
@@ -143,7 +144,8 @@
     <module>org.openhab.binding.tesla</module>
     <module>org.openhab.binding.toon</module>
     <module>org.openhab.binding.tplinksmarthome</module>
-    <module>org.openhab.binding.tplinksmarthome.test</module>    
+    <module>org.openhab.binding.tplinksmarthome.test</module>
+    <module>org.openhab.binding.unifi</module>
     <module>org.openhab.binding.urtsi</module>
     <module>org.openhab.binding.valloxmv</module>
     <module>org.openhab.binding.velbus</module>
