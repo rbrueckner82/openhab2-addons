@@ -7,6 +7,8 @@ bin/
 bundles/io/org.openhab.io.multimedia.tts.marytts/lib/
 .antlr*
 .metadata/
+.settings
+.project
 */plugin.xml_gen
 targetplatform/*.launch
 
