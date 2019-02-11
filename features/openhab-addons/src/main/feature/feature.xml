@@ -244,9 +244,10 @@
     </feature>
     
     <feature name="openhab-binding-heos" description="Denon HEOS Binding" version="${project.version}">
-    	<feature>openhab-runtime-base</feature>
-    	<feature>openhab-transport-upnp</feature>
-    	<bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle></feature>
+        <feature>openhab-runtime-base</feature>
+        <feature>openhab-transport-upnp</feature>
+        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle>
+    </feature>
 
     <feature name="openhab-binding-homematic" description="Homematic Binding" version="${project.version}">
         <feature>openhab-transport-upnp</feature>
@@ -264,12 +265,6 @@
         <feature>openhab-runtime-base</feature>
         <feature>openhab-transport-upnp</feature>
         <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.hue/${project.version}</bundle>
-    </feature>
-    
-    <feature name="openhab-binding-heos" description="Denon HEOS Binding" version="${project.version}">
-        <feature>openhab-runtime-base</feature>
-        <feature>openhab-transport-upnp</feature>
-        <bundle start-level="80">mvn:org.openhab.binding/org.openhab.binding.heos/${project.version}</bundle>
     </feature>
 
     <feature name="openhab-binding-hdanywhere" description="HDAnywhere Binding" version="${project.version}">
